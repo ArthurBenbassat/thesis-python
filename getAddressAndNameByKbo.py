@@ -34,4 +34,5 @@ def fetch_kbo_data(ondernemingsnummer):
 data[['Naam', 'Adres']] = data['ondernemingsnummer'].apply(lambda num: pd.Series(fetch_kbo_data(num)))
 
 
-print(data.head())
+# print first row of data
+print(data[['Naam', 'Adres']].head())
