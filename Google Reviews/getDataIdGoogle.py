@@ -4,6 +4,7 @@ import requests
 
 load_dotenv()
 
+#TODO check of dit met geocoding beter werkt of niet
 def get_place_id(name, address):
     base_url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
     params = {
@@ -21,5 +22,5 @@ def get_place_id(name, address):
     else:
         return None
 
-print(get_place_id("Vrije Universiteit Brussel", "Pleinlaan 2"))
+#print(get_place_id("Vrije Universiteit Brussel", "Pleinlaan 2"))
 #print(os.getenv("GOOGLE_API_KEY"))

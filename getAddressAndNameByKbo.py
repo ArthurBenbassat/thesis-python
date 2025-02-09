@@ -1,11 +1,15 @@
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
+import re
 
 url = "https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html"
 
 data = pd.read_csv('testKboNummers.csv', delimiter=',')
 
+def extract_before_sinds(text):
+    match = re.match(r"^(.*?)\s*Sinds", text)
+    return match.group(1)
 
 
 def fetch_kbo_data(ondernemingsnummer):
@@ -26,7 +30,7 @@ def fetch_kbo_data(ondernemingsnummer):
 
     # Get Address
     adres_tag = soup.find("td", string="Adres van de zetel:")
-    adres = adres_tag.find_next("td").text.strip().replace("\n", " ").replace("\xa0", " ") if adres_tag else pd.NA
+    adres = extract_before_sinds(adres_tag.find_next("td").text.strip().replace("\n", " ").replace("\xa0", " ").replace("\t", "")) if adres_tag else pd.NA
 
     return naam, adres
 
