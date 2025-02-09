@@ -4,7 +4,7 @@ import requests
 
 load_dotenv()
 
-def getDataIdGoogle(name, address):
+def get_place_id(name, address):
     base_url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json"
     params = {
         "input": f"{name}, {address}",
@@ -21,5 +21,5 @@ def getDataIdGoogle(name, address):
     else:
         return None
 
-print(getDataIdGoogle("Vrije Universiteit Brussel", "Pleinlaan 2"))
+print(get_place_id("Vrije Universiteit Brussel", "Pleinlaan 2"))
 #print(os.getenv("GOOGLE_API_KEY"))
