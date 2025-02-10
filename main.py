@@ -17,4 +17,4 @@ data['place_id'] = data.apply(lambda row: get_place_id(row['Name'], row['Address
 data['reviews'] = data.apply(lambda row: get_details_from_places_api(row['place_id']), axis=1)
 
 data
-## best way to show dataframe
+

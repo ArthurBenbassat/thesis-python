@@ -13,5 +13,16 @@ def get_data_by_serp_api():
 
   search = GoogleSearch(params)
   results = search.get_dict()
-  reviews = results["reviews"]
-  print(reviews)
+  print(results)
+
+def get_next_page(place_id, page_token):
+  params = {
+    "engine": "google_maps_reviews",
+    "data_id": place_id,
+    "page_token": page_token,
+
+  }
+
+
+
+get_data_by_serp_api()
