@@ -273,7 +273,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-
+.env
 # pytype static type analyzer
 .pytype/
 
@@ -296,5 +296,7 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
+
+Data/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm,jupyternotebooks
