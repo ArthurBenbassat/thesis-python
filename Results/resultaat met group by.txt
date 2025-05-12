@@ -1,0 +1,89 @@
+BERT: Classification Report:
+              precision    recall  f1-score   support
+
+         0.0       0.71      1.00      0.83       117
+         1.0       1.00      0.59      0.74       117
+
+    accuracy                           0.79       234
+   macro avg       0.85      0.79      0.79       234
+weighted avg       0.85      0.79      0.79       234
+
+ROC AUC: 0.8648549930601213
+True Negatives (Actual: Not Fraud, Predicted: Not Fraud): 117
+False Positives (Actual: Not Fraud, Predicted: Fraud): 0
+False Negatives (Actual: Fraud, Predicted: Not Fraud): 48
+True Positives (Actual: Fraud, Predicted: Fraud): 69
+
+
+Logistic Regression Results:
+AUC on the test set: 0.6012
+
+Classification Report on the test set:
+              precision    recall  f1-score   support
+
+           0       0.58      0.67      0.62       130
+           1       0.61      0.51      0.55       129
+
+    accuracy                           0.59       259
+   macro avg       0.59      0.59      0.59       259
+weighted avg       0.59      0.59      0.59       259
+
+True Negatives (Actual: Non-Fraud, Predicted: Non-Fraud): 87
+False Positives (Actual: Non-Fraud, Predicted: Fraud): 43
+False Negatives (Actual: Fraud, Predicted: Non-Fraud): 63
+True Positives (Actual: Fraud, Predicted: Fraud): 66
+
+Random Forest Results:
+AUC on the test set: 0.6579
+
+Classification Report on the test set:
+              precision    recall  f1-score   support
+
+           0       0.62      0.69      0.66       130
+           1       0.65      0.58      0.61       129
+
+    accuracy                           0.64       259
+   macro avg       0.64      0.64      0.64       259
+weighted avg       0.64      0.64      0.64       259
+
+True Negatives (Actual: Non-Fraud, Predicted: Non-Fraud): 90
+False Positives (Actual: Non-Fraud, Predicted: Fraud): 40
+False Negatives (Actual: Fraud, Predicted: Non-Fraud): 54
+True Positives (Actual: Fraud, Predicted: Fraud): 75
+
+
+Support Vector Machine (SVM) Results:
+AUC on the test set: 0.5806
+
+Classification Report on the test set:
+              precision    recall  f1-score   support
+
+           0       0.55      0.76      0.64       130
+           1       0.61      0.38      0.47       129
+
+    accuracy                           0.57       259
+   macro avg       0.58      0.57      0.55       259
+weighted avg       0.58      0.57      0.56       259
+
+True Negatives (Actual: Non-Fraud, Predicted: Non-Fraud): 99
+False Positives (Actual: Non-Fraud, Predicted: Fraud): 31
+False Negatives (Actual: Fraud, Predicted: Non-Fraud): 80
+True Positives (Actual: Fraud, Predicted: Fraud): 49
+
+
+LSTM: Classification Report:
+              precision    recall  f1-score   support
+
+         0.0       0.51      0.71      0.59       117
+         1.0       0.51      0.31      0.39       117
+
+    accuracy                           0.51       234
+   macro avg       0.51      0.51      0.49       234
+weighted avg       0.51      0.51      0.49       234
+
+ROC AUC: 0.526481116224706
+
+True Negatives (Actual: Not Fraud, Predicted: Not Fraud): 83
+False Positives (Actual: Not Fraud, Predicted: Fraud): 34
+False Negatives (Actual: Fraud, Predicted: Not Fraud): 81
+True Positives (Actual: Fraud, Predicted: Fraud): 36

@@ -11,18 +11,10 @@ import matplotlib.pyplot as plt
 
 def random_forest_for_fraud(df):
     """
-    Trains and evaluates a Random Forest model for fraud detection
-    using the provided columns.
-
-    Args:
-        df (pd.DataFrame): The input DataFrame containing Google review data
-                           and a 'fraud' column (0 or 1).
-
-    Returns:
-        tuple: The trained pipeline and evaluation metrics.
+    Trains and evaluates a Random Forest model for fraud detection at the company level.
     """
 
-    # Identify features
+    # Features
     text_feature = 'review_text'
     numerical_features = [
         'rating',
@@ -46,7 +38,7 @@ def random_forest_for_fraud(df):
         if col in X.columns:
             X[col] = X[col].astype(str)
 
-    # Split data
+    # Split
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
@@ -66,18 +58,18 @@ def random_forest_for_fraud(df):
         ('classifier', RandomForestClassifier(random_state=42, class_weight='balanced'))
     ])
 
-    # Train model
+    # Fit
     model.fit(X_train, y_train)
 
     # Predict
     y_pred_proba = model.predict_proba(X_test)[:, 1]
     y_pred = model.predict(X_test)
 
-    # Evaluation
+    # Metrics
     auc = roc_auc_score(y_test, y_pred_proba)
     report = classification_report(y_test, y_pred)
 
-    # Confusion matrix
+    # Confusion Matrix
     cm = confusion_matrix(y_test, y_pred)
     plt.figure(figsize=(6, 4))
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
@@ -95,37 +87,48 @@ def random_forest_for_fraud(df):
 
     return model, (auc, report)
 
-# === PREPROCESSING & SAMPLING ===
+# === PREPROCESSING & SAMPLING OP BEDRIJFSNIVEAU ===
 
-# Load data
-reviews_with_fraud_df = pd.read_csv('Data/combined_with_reviews.csv')
+# Load raw data
+df_raw = pd.read_csv('Data/combined_with_reviews.csv')
 
-# Balance dataset
-df_fraud = reviews_with_fraud_df[reviews_with_fraud_df['fraud'] == 1]
-df_nonfraud = reviews_with_fraud_df[reviews_with_fraud_df['fraud'] == 0]
+# Combineer reviews per bedrijf
+def combine_reviews(reviews, n=15):
+    return " ".join(reviews.dropna().tolist()[:n])
+
+# Groepeer per place_id
+grouped_df = df_raw.groupby('place_id').agg({
+    'fraud': 'max',  # Als 1 review frauduleus is → hele bedrijf frauduleus
+    'review_text': lambda x: combine_reviews(x, n=15),
+    'rating': 'mean',
+    'review_rating': 'mean',
+    'review_likes': 'mean',
+    'author_reviews_count': 'mean',
+    'author_ratings_count': 'mean',
+    'review_questions_Positive': lambda x: x.mode().iloc[0] if not x.mode().empty else 'unknown',
+    'review_questions_Negative': lambda x: x.mode().iloc[0] if not x.mode().empty else 'unknown'
+}).reset_index()
+
+# Balanceer dataset op bedrijfsniveau
+df_fraud = grouped_df[grouped_df['fraud'] == 1]
+df_nonfraud = grouped_df[grouped_df['fraud'] == 0]
 n_samples = min(len(df_fraud), len(df_nonfraud))
 
 df_fraud_sampled = df_fraud.sample(n=n_samples, random_state=42)
 df_nonfraud_sampled = df_nonfraud.sample(n=n_samples, random_state=42)
 
-# Combine and shuffle
-reviews_with_fraud_cleaned_df = pd.concat([df_fraud_sampled, df_nonfraud_sampled]).sample(frac=1, random_state=42).reset_index(drop=True)
+# Combineer en shuffle
+balanced_df = pd.concat([df_fraud_sampled, df_nonfraud_sampled]).sample(frac=1, random_state=42).reset_index(drop=True)
 
-# Fill missing values
-for col in ['rating', 'review_rating', 'review_likes', 'author_reviews_count', 'author_ratings_count',
-            'review_questions_Positive', 'review_questions_Negative']:
-    if col in reviews_with_fraud_cleaned_df.columns:
-        reviews_with_fraud_cleaned_df[col] = reviews_with_fraud_cleaned_df[col].fillna(0)
-
-# Convert types
-for col in ['review_questions_Positive', 'review_questions_Negative']:
-    reviews_with_fraud_cleaned_df[col] = reviews_with_fraud_cleaned_df[col].astype(str)
-
+# Vullen en converteren
 for col in ['rating', 'review_rating', 'review_likes', 'author_reviews_count', 'author_ratings_count']:
-    reviews_with_fraud_cleaned_df[col] = pd.to_numeric(reviews_with_fraud_cleaned_df[col], errors='coerce').fillna(0)
+    balanced_df[col] = pd.to_numeric(balanced_df[col], errors='coerce').fillna(0)
 
-# Run model
-trained_rf_model, rf_evaluation_metrics = random_forest_for_fraud(reviews_with_fraud_cleaned_df.copy())
+for col in ['review_questions_Positive', 'review_questions_Negative']:
+    balanced_df[col] = balanced_df[col].fillna('unknown').astype(str)
+
+# Train het model
+trained_rf_model, rf_evaluation_metrics = random_forest_for_fraud(balanced_df)
 
 if trained_rf_model:
     print("\nTrained Random Forest Pipeline:", trained_rf_model)

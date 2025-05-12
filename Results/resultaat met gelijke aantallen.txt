@@ -11,6 +11,13 @@ Classification Report on the test set:
    macro avg       0.60      0.60      0.60      2732
 weighted avg       0.60      0.60      0.60      2732
 
+|                      | Predicted Non-Fraud   | Predicted Fraud       |
+| -------------------- | --------------------- | --------------------- |
+| **Actual Non-Fraud** | 862 (True Negatives)  | 504 (False Positives) |
+| **Actual Fraud**     | 586 (False Negatives) | 780 (True Positives)  |
+
+
+
 Logistic Regression Results:
 AUC on the test set: 0.6369
 
@@ -23,6 +30,11 @@ Classification Report on the test set:
     accuracy                           0.59      2732
    macro avg       0.59      0.59      0.59      2732
 weighted avg       0.59      0.59      0.59      2732
+
+|                      | Predicted Non-Fraud   | Predicted Fraud       |
+| -------------------- | --------------------- | --------------------- |
+| **Actual Non-Fraud** | 863 (True Negatives)  | 503 (False Positives) |
+| **Actual Fraud**     | 605 (False Negatives) | 761 (True Positives)  |
 
 
 Support Vector Machine (SVM) Results:
@@ -37,3 +49,22 @@ Classification Report on the test set:
     accuracy                           0.58      2732
    macro avg       0.58      0.58      0.58      2732
 weighted avg       0.58      0.58      0.58      2732
+
+Werkelijke Klasse	Voorspelde Klasse	Aantal
+Non-Fraud	Non-Fraud	835 (True Negative)
+Non-Fraud	Fraud	531 (False Positive)
+Fraud	Non-Fraud	606 (False Negative)
+Fraud	Fraud	760 (True Positive)
+
+BERT MODEL:
+Classification Report:
+              precision    recall  f1-score   support
+
+         0.0       0.66      0.77      0.71      1135
+         1.0       0.72      0.60      0.66      1134
+
+    accuracy                           0.69      2269
+   macro avg       0.69      0.69      0.68      2269
+weighted avg       0.69      0.69      0.68      2269
+
+ROC AUC: 0.7692966303832677
