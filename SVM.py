@@ -2,20 +2,17 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import roc_auc_score, classification_report, confusion_matrix
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
+from sklearn.svm import SVC
+from sklearn.metrics import roc_auc_score, classification_report, confusion_matrix
 
-
-def logistic_regression_for_fraud(df):
+def svm_for_fraud(df):
     """
-    Trains and evaluates a Logistic Regression model for fraud detection.
+    Trains and evaluates a Support Vector Machine (SVM) model for fraud detection.
     """
-
-    # Define feature groups
     text_feature = 'review_text'
     numerical_features = [
         'rating', 'review_rating', 'review_likes',
@@ -26,21 +23,19 @@ def logistic_regression_for_fraud(df):
     ]
     target = 'fraud'
 
-    # Separate features and target
+    # Prepare features and target
     X = df.drop(columns=[target], errors='ignore')
     y = df[target]
-
     X['review_text'] = X['review_text'].fillna('')
     for col in categorical_features:
-        if col in X.columns:
-            X[col] = X[col].astype(str)
+        X[col] = X[col].astype(str)
 
-    # Split into train/test
+    # Train-test split
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
+        X, y, test_size=0.2, stratify=y, random_state=42
     )
 
-    # Preprocessing
+    # Preprocessing pipeline
     preprocessor = ColumnTransformer(
         transformers=[
             ('text', TfidfVectorizer(max_features=5000, stop_words='english', ngram_range=(1, 2)), text_feature),
@@ -49,35 +44,35 @@ def logistic_regression_for_fraud(df):
         ]
     )
 
-    # Pipeline with Logistic Regression
+    # Full pipeline with SVM
     model = Pipeline([
         ('preprocessor', preprocessor),
-        ('classifier', LogisticRegression(solver='liblinear', random_state=42, class_weight='balanced'))
+        ('classifier', SVC(probability=True, class_weight='balanced', random_state=42))
     ])
 
-    # Fit model
+    # Train
     model.fit(X_train, y_train)
 
-    # Predictions
-    y_pred_proba = model.predict_proba(X_test)[:, 1]
+    # Predict
     y_pred = model.predict(X_test)
+    y_pred_proba = model.predict_proba(X_test)[:, 1]
 
-    # Metrics
+    # Evaluate
     auc = roc_auc_score(y_test, y_pred_proba)
     report = classification_report(y_test, y_pred)
 
-    # Confusion Matrix
+    # Confusion matrix
     cm = confusion_matrix(y_test, y_pred)
     plt.figure(figsize=(6, 4))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Purples',
                 xticklabels=['Non-Fraud', 'Fraud'],
                 yticklabels=['Non-Fraud', 'Fraud'])
     plt.xlabel('Predicted')
     plt.ylabel('Actual')
-    plt.title('Confusion Matrix')
+    plt.title('SVM Confusion Matrix')
     plt.show()
 
-    print("Logistic Regression Results:")
+    print("\nSupport Vector Machine (SVM) Results:")
     print(f"AUC on the test set: {auc:.4f}")
     print("\nClassification Report on the test set:")
     print(report)
@@ -85,9 +80,9 @@ def logistic_regression_for_fraud(df):
     return model, (auc, report)
 
 
-# === PREPROCESSING & BALANCING ===
+# === DATA PREPARATION & BALANCING ===
 
-# Load dataset
+# Load and clean
 reviews_df = pd.read_csv('Data/combined_with_reviews.csv')
 
 # Balance 50/50
@@ -98,7 +93,7 @@ df_fraud_sampled = df_fraud.sample(n=n_samples, random_state=42)
 df_nonfraud_sampled = df_nonfraud.sample(n=n_samples, random_state=42)
 balanced_df = pd.concat([df_fraud_sampled, df_nonfraud_sampled]).sample(frac=1, random_state=42).reset_index(drop=True)
 
-# Fill and convert columns
+# Clean missing and types
 for col in ['rating', 'review_rating', 'review_likes', 'author_reviews_count', 'author_ratings_count',
             'review_questions_Positive', 'review_questions_Negative']:
     balanced_df[col] = balanced_df[col].fillna(0)
@@ -109,8 +104,8 @@ for col in ['rating', 'review_rating', 'review_likes', 'author_reviews_count', '
 for col in ['review_questions_Positive', 'review_questions_Negative']:
     balanced_df[col] = balanced_df[col].astype(str)
 
-# Train & evaluate
-trained_model, evaluation_metrics = logistic_regression_for_fraud(balanced_df)
+# Train and evaluate
+trained_svm_model, svm_metrics = svm_for_fraud(balanced_df)
 
-if trained_model:
-    print("\nTrained Logistic Regression Pipeline:", trained_model)
+if trained_svm_model:
+    print("\nTrained SVM Pipeline:", trained_svm_model)

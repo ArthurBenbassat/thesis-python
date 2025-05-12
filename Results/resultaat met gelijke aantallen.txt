@@ -1,0 +1,39 @@
+Random Forest Results:
+AUC on the test set: 0.6342
+
+Classification Report on the test set:
+              precision    recall  f1-score   support
+
+           0       0.60      0.63      0.61      1366
+           1       0.61      0.57      0.59      1366
+
+    accuracy                           0.60      2732
+   macro avg       0.60      0.60      0.60      2732
+weighted avg       0.60      0.60      0.60      2732
+
+Logistic Regression Results:
+AUC on the test set: 0.6369
+
+Classification Report on the test set:
+              precision    recall  f1-score   support
+
+           0       0.59      0.63      0.61      1366
+           1       0.60      0.56      0.58      1366
+
+    accuracy                           0.59      2732
+   macro avg       0.59      0.59      0.59      2732
+weighted avg       0.59      0.59      0.59      2732
+
+
+Support Vector Machine (SVM) Results:
+AUC on the test set: 0.6270
+
+Classification Report on the test set:
+              precision    recall  f1-score   support
+
+           0       0.58      0.61      0.59      1366
+           1       0.59      0.56      0.57      1366
+
+    accuracy                           0.58      2732
+   macro avg       0.58      0.58      0.58      2732
+weighted avg       0.58      0.58      0.58      2732
